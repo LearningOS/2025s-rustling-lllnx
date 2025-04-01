@@ -2,8 +2,7 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
-
+// I AM  DONE
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 #[derive(Debug, Clone)]
@@ -29,20 +28,24 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
+        let from_adj = self.adjacency_table.entry(edge.0.to_string()).or_default();
+        from_adj.push((edge.1.to_string(), edge.2));
+
+        let to_adj = self.adjacency_table.entry(edge.1.to_string()).or_default();
+        to_adj.push((edge.0.to_string(), edge.2));
+    }
+
+    fn add_node(&mut self, node: &str) -> bool {
+        self.adjacency_table.entry(node.to_string()).or_default();
+        true
     }
 }
 pub trait Graph {
     fn new() -> Self;
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>>;
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
-    fn add_node(&mut self, node: &str) -> bool {
-        //TODO
-		true
-    }
-    fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
-    }
+    fn add_node(&mut self, node: &str) -> bool;
+    fn add_edge(&mut self, edge: (&str, &str, i32));
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
     }

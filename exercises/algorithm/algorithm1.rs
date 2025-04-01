@@ -2,19 +2,19 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+// I AM  DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
 
 #[derive(Debug)]
-struct Node<T> {
+struct Node<T>  where T:PartialOrd{
     val: T,
     next: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Node<T> {
+impl<T> Node<T>  where T:PartialOrd{
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -23,19 +23,19 @@ impl<T> Node<T> {
     }
 }
 #[derive(Debug)]
-struct LinkedList<T> {
+struct LinkedList<T> where T:PartialOrd {
     length: u32,
     start: Option<NonNull<Node<T>>>,
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T> Default for LinkedList<T> where T:PartialOrd{
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T> LinkedList<T> where T:PartialOrd {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,20 +69,44 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self {
+        let mut ret = LinkedList::new();
+        let mut iter_a = list_a.start;
+        let mut iter_b = list_b.start;
+        while iter_a != None || iter_b != None {
+            match (iter_a, iter_b) {
+                (None, None) => {}
+                (Some(a_node), None) => {
+                    let val = unsafe {a_node.read().val};
+                    ret.add(val);
+                    iter_a = unsafe {a_node.read().next};
+                }
+                (None, Some(b_node)) => {
+                    let val = unsafe { b_node.read().val};
+                    ret.add(val);
+                    iter_b = unsafe {b_node.read().next};
+                }
+                (Some(a_node), Some(b_node)) => {
+                    let a_val = unsafe{a_node.read().val};
+                    let b_val = unsafe{b_node.read().val};
+                    if a_val < b_val {
+                        ret.add(a_val);
+                        iter_a = unsafe{a_node.read().next};
+                    } else  {
+                        ret.add(b_val);
+                        iter_b = unsafe {b_node.read().next};
+                    }
+                }
+            }
+
         }
+        ret
 	}
 }
 
 impl<T> Display for LinkedList<T>
 where
-    T: Display,
+    T: Display + PartialOrd
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self.start {
@@ -94,7 +118,7 @@ where
 
 impl<T> Display for Node<T>
 where
-    T: Display,
+    T: Display + PartialOrd,
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self.next {

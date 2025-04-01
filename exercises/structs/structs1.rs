@@ -5,7 +5,6 @@
 // Execute `rustlings hint structs1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 struct ColorClassicStruct {
     // TODO: Something goes here
@@ -36,7 +35,9 @@ mod tests {
     #[test]
     fn tuple_structs() {
         // TODO: Instantiate a tuple struct!
-        // let green =
+        // let green = 
+
+        
         let green=ColorTupleStruct(0,255,0);
 
         assert_eq!(green.0, 0);

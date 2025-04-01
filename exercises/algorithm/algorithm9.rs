@@ -2,10 +2,11 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+// I AM  DONE
 
 use std::cmp::Ord;
 use std::default::Default;
+
 
 pub struct Heap<T>
 where
@@ -37,7 +38,18 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        self.items.push(value);
+        let mut idx = self.count;
+        while idx > 1 {
+            let p_idx = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[p_idx]) {
+                self.items.swap(idx, p_idx);
+            } else {
+                break;
+            }
+            idx = p_idx;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +69,13 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left_idx = self.left_child_idx(idx);
+        let right_idx = self.right_child_idx(idx);
+        if(self.comparator)(&self.items[left_idx], &self.items[right_idx]) {
+            left_idx
+        } else {
+            right_idx
+        }
     }
 }
 
@@ -84,8 +101,41 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.count == 0 {
+            return None;
+        }
+
+        if self.count > 1 {
+            self.items.swap(1, self.count);
+            let mut idx = 1;
+            while idx < self.count {
+                let mut smaller_idx = idx;
+
+                let left_idx = self.left_child_idx(idx);
+                if left_idx < self.count {
+                    if (self.comparator)(&self.items[left_idx], &self.items[smaller_idx]) {
+                        smaller_idx = left_idx;
+                    }
+
+                }
+
+                let right_idx = self.right_child_idx(idx);
+                if right_idx < self.count {
+                    if (self.comparator)(&self.items[right_idx], &self.items[smaller_idx]) {
+                        smaller_idx = right_idx;
+                    }
+                }
+                if smaller_idx != idx {
+                    self.items.swap(idx, smaller_idx);
+                    idx = smaller_idx;
+                } else {
+                    break;
+                }
+            }
+        }
+        let value = self.items.swap_remove(self.count);
+        self.count -= 1;
+        Some(value)
     }
 }
 

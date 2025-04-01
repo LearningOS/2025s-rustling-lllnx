@@ -3,9 +3,8 @@
 	This problem requires you to implement a basic DFS traversal
 */
 
-// I AM NOT DONE
+// I AM  DONE
 use std::collections::HashSet;
-
 struct Graph {
     adj: Vec<Vec<usize>>, 
 }
@@ -23,6 +22,14 @@ impl Graph {
     }
 
     fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
+        visited.insert(v);
+        visit_order.push(v);
+        for v in self.adj[v].iter() {
+            if !visited.contains(v) {
+                visited.insert(*v);
+                self.dfs_util(*v, visited, visit_order);
+            }
+        }
         //TODO
     }
 
@@ -75,4 +82,3 @@ mod tests {
         assert_eq!(visit_order_disconnected, vec![3, 4]); 
     }
 }
-
